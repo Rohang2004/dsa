@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSA Lab Internal Exam</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            text-align: center;
+            padding: 20px;
+            background-color: #6c5ce7;
+            color: white;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .program {
+            border-bottom: 1px solid #ddd;
+        }
+        .program h3 {
+            margin: 0;
+            padding: 15px;
+            background: #74b9ff;
+            color: white;
+            cursor: pointer;
+        }
+        .program-content {
+            display: none;
+            padding: 15px;
+        }
+        pre {
+            background: #f1f1f1;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        .copy-btn {
+            margin-top: 10px;
+            padding: 8px 12px;
+            background: #6c5ce7;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .copy-btn:hover {
+            background: #5a4dcf;
+        }
+        footer {
+            text-align: center;
+            padding: 15px;
+            background: #6c5ce7;
+            color: white;
+        }
+    </style>
+    <script>
+        function toggleContent(index) {
+            const content = document.querySelectorAll('.program-content')[index];
+            content.style.display = content.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function copyCode(index) {
+            const codeBlocks = document.querySelectorAll('pre');
+            const codeText = codeBlocks[index].innerText;
+            navigator.clipboard.writeText(codeText).then(() => {
+                alert("Code copied to clipboard!");
+            }).catch(err => {
+                alert("Failed to copy code: " + err);
+            });
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <h1>DSA Lab Internal Programs</h1>
+    </header>
+    <div class="container">
+        <div class="program">
+            <h3 onclick="toggleContent(0)">Program 1:</h3>
+            <div class="program-content">
+                <pre>
+                    #include &lt;stdio.h&gt;
+                    #include &lt;stdlib.h&gt;
+                        
+                        struct Day {
+                            char *dayName;
+                            int date;
+                            char *activity;
+                        };
+                        
+                        void create(struct Day *day) {
+                            day->dayName = (char *)malloc(sizeof(char) * 20);
+                            day->activity = (char *)malloc(sizeof(char) * 100);
+                        
+                            printf("Enter the day name: ");
+                            scanf("%s", day->dayName);
+                        
+                            printf("Enter the date: ");
+                            scanf("%d", &day->date);
+                        
+                            printf("Enter the activity for the day: ");
+                            scanf(" %[^\n]s", day->activity);
+                        }
+                        
+                        void read(struct Day *calendar, int size) {
+                            for (int i = 0; i < size; i++) {
+                                printf("Enter details for Day %d:\n", i + 1);
+                                create(&calendar[i]);
+                            }
+                        }
+                        
+                        void display(struct Day *calendar, int size) {
+                            printf("\nWeek's Activity Details:\n");
+                            for (int i = 0; i < size; i++) {
+                                printf("Day %d:\n", i + 1);
+                                printf("Day Name: %s\n", calendar[i].dayName);
+                                printf("Date: %d\n", calendar[i].date);
+                                printf("Activity: %s\n", calendar[i].activity);
+                                printf("\n");
+                            }
+                        }
+                        
+                        void freeMemory(struct Day *calendar, int size) {
+                            for (int i = 0; i < size; i++) {
+                                free(calendar[i].dayName);
+                                free(calendar[i].activity);
+                            }
+                        }
+                        
+                        int main() {
+                            int size;
+                            printf("Enter the number of days in the week: ");
+                            scanf("%d", &size);
+                        
+                            struct Day *calendar = (struct Day *)malloc(sizeof(struct Day) * size);
+                        
+                            if (calendar == NULL) {
+                                printf("Memory allocation failed. Exiting program.\n");
+                                return 1;
+                            }
+                        
+                            read(calendar, size);
+                            display(calendar, size);
+                        
+                            freeMemory(calendar, size);
+                            free(calendar);
+                        
+                            return 0;
+                        }
+                </pre>
+                <button class="copy-btn" onclick="copyCode(0)">Copy Code</button>
+            </div>
+        </div>
+        <div class="program">
+            <h3 onclick="toggleContent(1)">Program 2:</h3>
+            <div class="program-content">
+                <pre>
+                    #include &lt;stdio.h&gt;
+
+                        char str[50], pat[20], rep[20], res[50];
+                        int c = 0, m = 0, i = 0, j = 0, k, flag = 0;
+                        void stringmatch()
+                        {
+                            while (str[c] != '\0')
+                            {
+                                if (str[m] == pat[i])
+                                {
+                                    i++;
+                                    m++;
+                                    if (pat[i] == '\0')
+                                    {
+                                        flag = 1;
+                                        for (k = 0; rep[k] != '\0'; k++, j++)
+                                        {
+                                            res[j] = rep[k];
+                                        }
+                                        i = 0;
+                                        c = m;
+                                    }
+                                }
+                                else
+                                {
+                                    res[j] = str[c];
+                                    j++;
+                                    c++;
+                                    m = c;
+                                    i = 0;
+                                }
+                            }
+                            res[j] = '\0';
+                        }
+                        void main()
+                        {
+                            printf("Enter the main string:");
+                            gets(str);
+                            printf("\nEnter the pat string:");
+                            gets(pat);
+                            printf("\nEnter the replace string:");
+                            gets(rep);
+                            printf("\nThe string before pattern match is:\n %s", str);
+                            stringmatch();
+                            if (flag == 1)
+                                printf("\nThe string after pattern match and replace is: \n %s ", res);
+                            else
+                                printf("\nPattern string is not found");
+                        }
+                </pre>
+                <button class="copy-btn" onclick="copyCode(1)">Copy Code</button>
+            </div>
+        </div>
+        <div class="program">
+            <h3 onclick="toggleContent(2)">Program 3:</h3>
+            <div class="program-content">
+                <pre>
+#include &lt;stdio.h&gt;
+#include<stdio.h>
+
+    #include<stdlib.h>
+    
+    #define MAX 3
+    
+    int s[MAX];
+    int top = -1;
+    
+    void push(int item);
+    int pop();
+    void palindrome();
+    void display();
+    
+    void main()
+    {
+        int choice, item;
+        while (1)
+        {
+            printf("\n\n\n\n-----------Menu----------- : ");
+            printf("\n=>1.Push an Element to Stack and Overflow demo ");
+            printf("\n=>2.Pop an Element from Stack and Underflow demo");
+            printf("\n=>3.Palindrome demo ");
+            printf("\n=>4.Display ");
+            printf("\n=>5.Exit");
+            printf("\nEnter your choice: ");
+            scanf("%d", & choice);
+            switch (choice)
+            {
+            case 1:
+                printf("\nEnter an element to be pushed: ");
+                scanf("%d", & item);
+                push(item);
+                break;
+            case 2:
+                item = pop();
+                if (item != -1)
+                    printf("\nElement popped is: %d", item);
+                break;
+            case 3:
+                palindrome();
+                break;
+            case 4:
+                display();
+                break;
+            case 5:
+                exit(1);
+            default:
+                printf("\nPlease enter valid choice ");
+                break;
+            }
+        }
+    }
+    
+    void push(int item)
+    {
+        if (top == MAX - 1)
+        {
+            printf("\n-----------Stack overflow-----------");
+            return;
+        }
+    
+        top = top + 1;
+        s[top] = item;
+    }
+    
+    int pop()
+    {
+        int item;
+        if (top == -1)
+        {
+            printf("\n-----------Stack underflow-----------");
+            return -1;
+        }
+        item = s[top];
+        top = top - 1;
+        return item;
+    }
+    
+    void display()
+    {
+        int i;
+        if (top == -1)
+        {
+            printf("\n-----------Stack is empty-----------");
+            return;
+        }
+        printf("\nStack elements are:\n ");
+        for (i = top; i >= 0; i--)
+            printf("| %d |\n", s[i]);
+    }
+    
+    void palindrome()
+    {
+        int flag = 1, i;
+        printf("\nStack content are:\n");
+        for (i = top; i >= 0; i--)
+            printf("| %d |\n", s[i]);
+    
+        printf("\nReverse of stack content are:\n");
+        for (i = 0; i <= top; i++)
+            printf("| %d |\n", s[i]);
+    
+        for (i = 0; i <= top / 2; i++)
+        {
+            if (s[i] != s[top - i])
+            {
+                flag = 0;
+                break;
+            }
+        }
+        if (flag == 1)
+        {
+            printf("\nIt is palindrome number");
+        }
+        else
+        {
+            printf("\nIt is not a palindrome number");
+        }
+    }
+                </pre>
+                <button class="copy-btn" onclick="copyCode(2)">Copy Code</button>
+            </div>
+        </div>
+        <div class="program">
+            <h3 onclick="toggleContent(3)">Program 4:</h3>
+            <div class="program-content">
+                <pre>
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+    
+    void evaluate();
+    void push(char);
+    char pop();
+    int prec(char);
+    
+    char infix[30], postfix[30], stack[30];
+    int top = -1;
+    
+    void main()
+    {
+        printf("\n Enter the valid infix expression:");
+        scanf("%s", infix);
+        evaluate();
+        printf("\nThe entered infix expression is :\n %s \n", infix);
+        printf("\nThe corresponding postfix expression is :\n %s \n", postfix);
+    }
+    
+    void evaluate()
+    {
+        int i = 0, j = 0;
+        char symb, temp;
+    
+        push('#');
+    
+        for (i = 0; infix[i] != '\0'; i++)
+        {
+            symb = infix[i];
+            switch (symb)
+            {
+            case '(':
+                push(symb);
+                break;
+    
+            case ')':
+                temp = pop();
+                while (temp != '(')
+                {
+                    postfix[j] = temp;
+                    j++;
+                    temp = pop();
+                }
+                break;
+            case '+':
+            case '-':
+            case '*':
+            case '/':
+            case '%':
+            case '^':
+            case '$':
+                while (prec(stack[top]) >= prec(symb))
+                {
+                    temp = pop();
+                    postfix[j] = temp;
+                    j++;
+                }
+                push(symb);
+                break;
+            default:
+                postfix[j] = symb;
+                j++;
+            }
+        }
+        while (top > 0)
+        {
+            temp = pop();
+            postfix[j] = temp;
+            j++;
+        }
+        postfix[j] = '\0';
+    }
+    
+    void push(char item)
+    {
+        top = top + 1;
+        stack[top] = item;
+    }
+    
+    char pop()
+    {
+        char item;
+        item = stack[top];
+        top = top - 1;
+        return item;
+    }
+    
+    int prec(char symb)
+    {
+        int p;
+        switch (symb)
+        {
+        case '#':
+            p = -1;
+            break;
+    
+        case '(':
+        case ')':
+            p = 0;
+            break;
+    
+        case '+':
+        case '-':
+            p = 1;
+            break;
+    
+        case '*':
+        case '/':
+        case '%':
+            p = 2;
+            break;
+    
+        case '^':
+        case '$':
+            p = 3;
+            break;
+        }
+        return p;
+    }
+                </pre>
+                <button class="copy-btn" onclick="copyCode(3)">Copy Code</button>
+            </div>
+        </div>
+        <div class="program">
+            <h3 onclick="toggleContent(4)">Program 5:</h3>
+            <div class="program-content">
+                <pre>
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+    #include<stdlib.h>
+    
+    #include<math.h>
+    
+    int i, top = -1;
+    int op1, op2, res, s[20];
+    char postfix[90], symb;
+    
+    void push(int item)
+    {
+        top = top + 1;
+        s[top] = item;
+    }
+    
+    int pop()
+    {
+        int item;
+        item = s[top];
+        top = top - 1;
+        return item;
+    }
+    
+    void main()
+    {
+        printf("\nEnter a valid postfix expression:\n");
+        scanf("%s", postfix);
+        for (i = 0; postfix[i] != '\0'; i++)
+        {
+            symb = postfix[i];
+            if (isdigit(symb))
+            {
+                push(symb - '0');
+            }
+            else
+            {
+                op2 = pop();
+                op1 = pop();
+                switch (symb)
+                {
+                case '+':
+                    push(op1 + op2);
+                    break;
+                case '-':
+                    push(op1 - op2);
+                    break;
+                case '*':
+                    push(op1 * op2);
+                    break;
+                case '/':
+                    push(op1 / op2);
+                    break;
+                case '%':
+                    push(op1 % op2);
+                    break;
+                case '$':
+                case '^':
+                    push(pow(op1, op2));
+                    break;
+                default:
+                    push(0);
+                }
+            }
+        }
+        res = pop();
+        printf("\n Result = %d", res);
+    }
+                </pre>
+                <button class="copy-btn" onclick="copyCode(4)">Copy Code</button>
+            </div>
+        </div>
+        <div class="program">
+            <h3 onclick="toggleContent(5)">Program 6:</h3>
+            <div class="program-content">
+                <pre>
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+    
+    #define MAX 5
+    
+    char circular_queue[MAX];
+    int front = -1, rear = -1;
+    
+    int isEmpty()
+    {
+        if (front == -1 && rear == -1)
+            return 1;
+        else
+            return 0;
+    }
+    
+    int isFull()
+    {
+        if ((rear + 1) % MAX == front)
+            return 1;
+        else
+            return 0;
+    }
+    
+    void insertElement(char element)
+    {
+        if (isFull())
+        {
+            printf("Circular Queue Overflow\n");
+            return;
+        }
+        else if (isEmpty())
+        {
+            front = rear = 0;
+        }
+        else
+        {
+            rear = (rear + 1) % MAX;
+        }
+        circular_queue[rear] = element;
+    }
+    
+    void deleteElement()
+    {
+        if (isEmpty())
+        {
+            printf("Circular Queue Underflow\n");
+            return;
+        }
+        else if (front == rear)
+        {
+            front = rear = -1;
+        }
+        else
+        {
+            front = (front + 1) % MAX;
+        }
+    }
+    
+    void display()
+    {
+        int i;
+        if (isEmpty())
+        {
+            printf("Circular Queue is empty\n");
+            return;
+        }
+        printf("Circular Queue elements: ");
+        i = front;
+        do
+        {
+            printf("%c ", circular_queue[i]);
+            i = (i + 1) % MAX;
+        }
+        while (i != (rear + 1) % MAX);
+        printf("\n");
+    }
+    
+    int main()
+    {
+        int choice;
+        char element;
+        do
+        {
+            printf("\n\n---- Circular Queue Menu ----\n");
+            printf("1. Insert an Element\n");
+            printf("2. Delete an Element\n");
+            printf("3. Display Circular Queue\n");
+            printf("4. Exit\n");
+            printf("Enter your choice: ");
+            scanf("%d", &choice);
+    
+            switch(choice)
+            {
+            case 1:
+                printf("Enter element to be inserted: ");
+                scanf(" %c", &element);
+                insertElement(element);
+                break;
+            case 2:
+                deleteElement();
+                break;
+            case 3:
+                display();
+                break;
+            case 4:
+                printf("Exiting...\n");
+                break;
+            default:
+                printf("Invalid choice! Please enter a valid option.\n");
+            }
+        }
+        while(choice != 4);
+    
+        return 0;
+    }
+                </pre>
+                <button class="copy-btn" onclick="copyCode(5)">Copy Code</button>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <p>&copy; 2024 DSA Lab Preparation</p>
+    </footer>
+</body>
+</html>
