@@ -253,130 +253,121 @@ return head;
             </div>
         </div>
         <div class="program">
-            <h3 onclick="toggleContent(2)">Program 3:</h3>
+            <h3 onclick="toggleContent(2)">Program 9:</h3>
             <div class="program-content">
                 <pre>
-#include &lt;stdio.h&gt;
-#include<stdio.h>
+#include stdio.h
+#include stdlib.h
+#include math.h
+typedef struct Term {
+int coeff, xExp, yExp, zExp;
+struct Term *next;
+} Term;
 
-    #include<stdlib.h>
-    
-    #define MAX 3
-    
-    int s[MAX];
-    int top = -1;
-    
-    void push(int item);
-    int pop();
-    void palindrome();
-    void display();
-    
-    void main()
-    {
-        int choice, item;
-        while (1)
-        {
-            printf("\n\n\n\n-----------Menu----------- : ");
-            printf("\n=>1.Push an Element to Stack and Overflow demo ");
-            printf("\n=>2.Pop an Element from Stack and Underflow demo");
-            printf("\n=>3.Palindrome demo ");
-            printf("\n=>4.Display ");
-            printf("\n=>5.Exit");
-            printf("\nEnter your choice: ");
-            scanf("%d", & choice);
-            switch (choice)
-            {
-            case 1:
-                printf("\nEnter an element to be pushed: ");
-                scanf("%d", & item);
-                push(item);
-                break;
-            case 2:
-                item = pop();
-                if (item != -1)
-                    printf("\nElement popped is: %d", item);
-                break;
-            case 3:
-                palindrome();
-                break;
-            case 4:
-                display();
-                break;
-            case 5:
-                exit(1);
-            default:
-                printf("\nPlease enter valid choice ");
-                break;
-            }
-        }
-    }
-    
-    void push(int item)
-    {
-        if (top == MAX - 1)
-        {
-            printf("\n-----------Stack overflow-----------");
-            return;
-        }
-    
-        top = top + 1;
-        s[top] = item;
-    }
-    
-    int pop()
-    {
-        int item;
-        if (top == -1)
-        {
-            printf("\n-----------Stack underflow-----------");
-            return -1;
-        }
-        item = s[top];
-        top = top - 1;
-        return item;
-    }
-    
-    void display()
-    {
-        int i;
-        if (top == -1)
-        {
-            printf("\n-----------Stack is empty-----------");
-            return;
-        }
-        printf("\nStack elements are:\n ");
-        for (i = top; i >= 0; i--)
-            printf("| %d |\n", s[i]);
-    }
-    
-    void palindrome()
-    {
-        int flag = 1, i;
-        printf("\nStack content are:\n");
-        for (i = top; i >= 0; i--)
-            printf("| %d |\n", s[i]);
-    
-        printf("\nReverse of stack content are:\n");
-        for (i = 0; i <= top; i++)
-            printf("| %d |\n", s[i]);
-    
-        for (i = 0; i <= top / 2; i++)
-        {
-            if (s[i] != s[top - i])
-            {
-                flag = 0;
-                break;
-            }
-        }
-        if (flag == 1)
-        {
-            printf("\nIt is palindrome number");
-        }
-        else
-        {
-            printf("\nIt is not a palindrome number");
-        }
-    }
+// Function to create a new term
+Term* createTerm(int coeff, int xExp, int yExp, int zExp) {
+Term newTerm = (Term)malloc(sizeof(Term));
+newTerm->coeff = coeff;
+newTerm->xExp = xExp;
+newTerm->yExp = yExp;
+newTerm->zExp = zExp;
+newTerm->next = NULL;
+return newTerm;
+}
+
+// Function to insert a term in the polynomial
+void insertTerm(Term **head, int coeff, int xExp, int yExp, int zExp) {
+Term *newTerm = createTerm(coeff, xExp, yExp, zExp);
+if (*head == NULL) {
+*head = newTerm;
+newTerm->next = *head;
+} else {
+Term *temp = *head;
+while (temp->next != *head) {
+temp = temp->next;
+}
+temp->next = newTerm;
+newTerm->next = *head;
+}
+}
+
+// Function to evaluate a polynomial
+double evaluatePolynomial(Term *head, double x, double y, double z) {
+double result = 0.0;
+if (head == NULL) return result;
+Term *temp = head;
+do {
+result += temp->coeff * pow(x, temp->xExp) * pow(y, temp->yExp) * pow(z, temp->zExp);
+temp = temp->next;
+} while (temp != head);
+return result;
+}
+
+// Function to add two polynomials
+// Note: This is a simplified version and assumes terms are in the same order
+Term* addPolynomials(Term *head1, Term *head2) {
+Term *sumHead = NULL;
+Term *temp1 = head1, *temp2 = head2;
+if (head1 == NULL) return head2;
+if (head2 == NULL) return head1;
+do {
+insertTerm(&sumHead, temp1->coeff + temp2->coeff, temp1->xExp, temp1->yExp, temp1->zExp);
+temp1 = temp1->next;
+temp2 = temp2->next;
+} while (temp1 != head1 && temp2 != head2);
+return sumHead;
+}
+
+int main() {
+Term *poly1 = NULL, *poly2 = NULL, *polySum = NULL;
+int coeff, xExp, yExp, zExp;
+int n, i;
+double x, y, z, result;
+
+// Input for POLY1
+printf("Enter the number of terms for POLY1: ");
+scanf("%d", &n);
+for (i = 0; i < n; i++) {
+printf("Enter coeff, x exponent, y exponent, z exponent for term %d: ", i + 1);
+scanf("%d %d %d %d", &coeff, &xExp, &yExp, &zExp);
+insertTerm(&poly1, coeff, xExp, yExp, zExp);
+}
+
+// Input for POLY2
+printf("Enter the number of terms for POLY2: ");
+scanf("%d", &n);
+for (i = 0; i < n; i++) {
+printf("Enter coeff, x exponent, y exponent, z exponent for term %d: ", i + 1);
+scanf("%d %d %d %d", &coeff, &xExp, &yExp, &zExp);
+insertTerm(&poly2, coeff, xExp, yExp, zExp);
+}
+
+// Add POLY1 and POLY2
+polySum = addPolynomials(poly1, poly2);
+
+// Evaluate POLY1
+printf("Enter values for x, y, and z to evaluate POLY1: ");
+scanf("%lf %lf %lf", &x, &y, &z);
+result = evaluatePolynomial(poly1, x, y, z);
+printf("POLY1(%lf, %lf, %lf) = %lf\n", x, y, z, result);
+
+// Display POLYSUM
+printf("POLYSUM(x, y, z) = ");
+Term *temp = polySum;
+if (temp != NULL) {
+do {
+printf("%+dx^%dy^%dz ", temp->coeff, temp->xExp, temp->yExp, temp->zExp);
+temp = temp->next;
+} while (temp != polySum);
+printf("\n");
+} else {
+printf("0\n"); // POLYSUM is empty
+}
+
+// Free memory (not shown, but important in a complete program)
+
+return 0;
+}
                 </pre>
                 <button class="copy-btn" onclick="copyCode(2)">Copy Code</button>
             </div>
@@ -591,125 +582,108 @@ int main() {
             </div>
         </div>
         <div class="program">
-            <h3 onclick="toggleContent(5)">Program 6:</h3>
+            <h3 onclick="toggleContent(5)">Program 11:</h3>
             <div class="program-content">
                 <pre>
-#include &lt;stdio.h&gt;
-#include &lt;stdlib.h&gt;
-    
-    #define MAX 5
-    
-    char circular_queue[MAX];
-    int front = -1, rear = -1;
-    
-    int isEmpty()
-    {
-        if (front == -1 && rear == -1)
-            return 1;
-        else
-            return 0;
-    }
-    
-    int isFull()
-    {
-        if ((rear + 1) % MAX == front)
-            return 1;
-        else
-            return 0;
-    }
-    
-    void insertElement(char element)
-    {
-        if (isFull())
-        {
-            printf("Circular Queue Overflow\n");
-            return;
-        }
-        else if (isEmpty())
-        {
-            front = rear = 0;
-        }
-        else
-        {
-            rear = (rear + 1) % MAX;
-        }
-        circular_queue[rear] = element;
-    }
-    
-    void deleteElement()
-    {
-        if (isEmpty())
-        {
-            printf("Circular Queue Underflow\n");
-            return;
-        }
-        else if (front == rear)
-        {
-            front = rear = -1;
-        }
-        else
-        {
-            front = (front + 1) % MAX;
-        }
-    }
-    
-    void display()
-    {
-        int i;
-        if (isEmpty())
-        {
-            printf("Circular Queue is empty\n");
-            return;
-        }
-        printf("Circular Queue elements: ");
-        i = front;
-        do
-        {
-            printf("%c ", circular_queue[i]);
-            i = (i + 1) % MAX;
-        }
-        while (i != (rear + 1) % MAX);
-        printf("\n");
-    }
-    
-    int main()
-    {
-        int choice;
-        char element;
-        do
-        {
-            printf("\n\n---- Circular Queue Menu ----\n");
-            printf("1. Insert an Element\n");
-            printf("2. Delete an Element\n");
-            printf("3. Display Circular Queue\n");
-            printf("4. Exit\n");
-            printf("Enter your choice: ");
-            scanf("%d", &choice);
-    
-            switch(choice)
-            {
-            case 1:
-                printf("Enter element to be inserted: ");
-                scanf(" %c", &element);
-                insertElement(element);
-                break;
-            case 2:
-                deleteElement();
-                break;
-            case 3:
-                display();
-                break;
-            case 4:
-                printf("Exiting...\n");
-                break;
-            default:
-                printf("Invalid choice! Please enter a valid option.\n");
-            }
-        }
-        while(choice != 4);
-    
-        return 0;
-    }
+#include stdio.h
+#include stdlib.h
+
+#define MAX 100 
+// Maximum number of cities
+
+// Global Variables
+int adjMatrix[MAX][MAX]; 
+// Adjacency matrix to store the graph
+int visited[MAX];
+// Array to keep track of visited cities
+int n; 
+// Number of cities
+
+// Function to create the graph
+void createGraph() {
+int i, j, edges, origin, destin;
+
+printf("Enter number of cities: ");
+scanf("%d", &n);
+
+// Initialize adjacency matrix to 0
+for (i = 0; i < n; i++) {
+for (j = 0; j < n; j++) {
+adjMatrix[i][j] = 0;
+}
+}
+
+printf("Enter number of roads between the cities: ");
+scanf("%d", &edges);
+
+for (i = 0; i < edges; i++) {
+printf("Enter origin and destination cities numbers between 0 and %d: ", n-1);
+scanf("%d %d", &origin, &destin);
+adjMatrix[origin][destin] = 1;
+}
+}
+
+// DFS function
+void DFS(int city) {
+int i;
+printf("%d ", city);
+visited[city] = 1;
+
+for (i = 0; i < n; i++) {
+if (adjMatrix[city][i] == 1 && !visited[i]) {
+DFS(i);
+}
+}
+}
+
+// BFS function
+void BFS(int startCity) {
+int queue[MAX], front = 0, rear = -1, i;
+visited[startCity] = 1;
+queue[++rear] = startCity;
+
+while (front <= rear) {
+int currentCity = queue[front++];
+printf("%d ", currentCity);
+
+for (i = 0; i < n; i++) {
+if (adjMatrix[currentCity][i] == 1 && !visited[i]) {
+queue[++rear] = i;
+visited[i] = 1;
+}
+}
+}
+}
+
+// Main function
+int main() {
+int choice, startCity;
+
+createGraph();
+
+printf("Enter the starting city number between 0 and %d: ", n-1);
+scanf("%d", &startCity);
+
+printf("\nChoose method to find reachable cities:\n");
+printf("1. Depth First Search (DFS)\n");
+printf("2. Breadth First Search (BFS)\n");
+scanf("%d", &choice);
+
+// Reset visited array
+for (int i = 0; i < n; i++) visited[i] = 0;
+
+if (choice == 1) {
+printf("Cities reachable from city %d using DFS:\n", startCity);
+DFS(startCity);
+} else if (choice == 2) {
+printf("Cities reachable from city %d using BFS:\n", startCity);
+BFS(startCity);
+} else {
+printf("Invalid choice!\n");
+}
+
+return 0;
+}
                 </pre>
                 <button class="copy-btn" onclick="copyCode(5)">Copy Code</button>
             </div>
