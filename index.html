@@ -87,505 +87,92 @@
     </header>
     <div class="container">
         <div class="program">
-            <h3 onclick="toggleContent(0)">Program 8:</h3>
+            <h3 onclick="toggleContent(0)">Program 12:</h3>
             <div class="program-content">
                 <pre>
                     #include stdio.h
 #include stdlib.h
-#include string.h
 
-// Employee Structure
-typedef struct Employee {
-char ssn[20];
-char name[100];
-char dept[50];
-char designation[50];
-double sal;
-char phNo[15];
-struct Employee *prev, *next;
-} Employee;
+#define TABLE_SIZE 100 // Size of the hash table
 
-// Function Declarations
-Employee* createEmployee();
-Employee* insertAtEnd(Employee* head);
-void display(Employee* head);
-int countNodes(Employee* head);
-Employee* deleteAtEnd(Employee* head);
-Employee* insertAtFront(Employee* head);
-Employee* deleteAtFront(Employee* head);
+typedef struct {
+int key;
+int flag; // 0 if empty, 1 if occupied
+} HashTableEntry;
 
-// Main Function
-int main() {
-Employee *head = NULL;
-int choice, count;
+HashTableEntry HT[TABLE_SIZE];
 
-while(1) {
-printf("\nMenu:\n");
-printf("1. Insert Employee at End\n");
-printf("2. Display Employees\n");
-printf("3. Count Employees\n");
-printf("4. Delete Employee at End\n");
-printf("5. Insert Employee at Front\n");
-printf("6. Delete Employee at Front\n");
-printf("7. Exit\n");
-printf("Enter your choice: ");
-scanf("%d", &choice);
-
-switch(choice) {
-case 1: head = insertAtEnd(head); break;
-case 2: display(head); break;
-case 3:
-count = countNodes(head);
-printf("Total number of employees: %d\n", count);
-break;
-case 4: head = deleteAtEnd(head); break;
-case 5: head = insertAtFront(head); break;
-case 6: head = deleteAtFront(head); break;
-case 7: exit(0);
-default: printf("Invalid choice!\n");
-}
-}
-return 0;
-}
-
-// Function Definitions
-Employee* createEmployee() {
-Employee newNode = (Employee)malloc(sizeof(Employee));
-printf("Enter SSN: ");
-scanf("%s", newNode->ssn);
-printf("Enter Name: ");
-scanf("%s", newNode->name); // Use fgets for multi-word names
-printf("Enter Department: ");
-scanf("%s", newNode->dept);
-printf("Enter Designation: ");
-scanf("%s", newNode->designation);
-printf("Enter Salary: ");
-scanf("%lf", &newNode->sal);
-printf("Enter Phone Number: ");
-scanf("%s", newNode->phNo);
-
-newNode->prev = NULL;
-newNode->next = NULL;
-return newNode;
-}
-
-Employee* insertAtEnd(Employee* head) {
-Employee *newNode = createEmployee();
-if (head == NULL) {
-return newNode;
-} else {
-Employee *temp = head;
-while (temp->next != NULL) {
-temp = temp->next;
-}
-temp->next = newNode;
-newNode->prev = temp;
-return head;
+// Initialize hash table
+void initializeHashTable() {
+for (int i = 0; i < TABLE_SIZE; i++) {
+HT[i].flag = 0; // Mark all entries as empty
 }
 }
 
-void display(Employee* head) {
-Employee *temp = head;
-if (head == NULL) {
-printf("List is empty!\n");
+// Hash function
+int hashFunction(int key) {
+return key % TABLE_SIZE;
+}
+
+// Insert a key into the hash table
+void insert(int key) {
+int index = hashFunction(key);
+int originalIndex = index;
+while (HT[index].flag == 1) {
+index = (index + 1) % TABLE_SIZE;
+if (index == originalIndex) { // Table is full
+printf("Hash table is full. Cannot insert key: %d\n", key);
 return;
 }
-while (temp != NULL) {
-printf("SSN: %s, Name: %s, Dept: %s, Designation: %s, Salary: %.2f, Phone No: %s\n",
-temp->ssn, temp->name, temp->dept, temp->designation, temp->sal, temp->phNo);
-temp = temp->next;
 }
-}
-
-int countNodes(Employee* head) {
-int count = 0;
-Employee *temp = head;
-while (temp != NULL) {
-count++;
-temp = temp->next;
-}
-return count;
+HT[index].key = key;
+HT[index].flag = 1;
+printf("Inserted key: %d at index: %d\n", key, index);
 }
 
-Employee* deleteAtEnd(Employee* head) {
-if (head == NULL) {
-printf("List is already empty!\n");
-return NULL;
-} else if (head->next == NULL) {
-free(head);
-return NULL;
-} else {
-Employee *temp = head;
-while (temp->next != NULL) {
-temp = temp->next;
+// Search for a key in the hash table
+int search(int key) {
+int index = hashFunction(key);
+int originalIndex = index;
+while (HT[index].flag != 0) {
+if (HT[index].key == key) {
+return index; // Key found
 }
-temp->prev->next = NULL;
-free(temp);
-return head;
+index = (index + 1) % TABLE_SIZE;
+if (index == originalIndex) {
+break; // Came full circle, key not found
 }
 }
-
-Employee* insertAtFront(Employee* head) {
-Employee *newNode = createEmployee();
-if (head == NULL) {
-return newNode;
-} else {
-newNode->next = head;
-head->prev = newNode;
-return newNode;
-}
-}
-
-Employee* deleteAtFront(Employee* head) {
-if (head == NULL) {
-printf("List is already empty!\n");
-return NULL;
-} else {
-Employee *temp = head;
-head = head->next;
-if (head != NULL) head->prev = NULL;
-free(temp);
-return head;
-}
-}
-                </pre>
-                <button class="copy-btn" onclick="copyCode(1)">Copy Code</button>
-            </div>
-        </div>
-        <div class="program">
-            <h3 onclick="toggleContent(2)">Program 9:</h3>
-            <div class="program-content">
-                <pre>
-#include stdio.h
-#include stdlib.h
-#include math.h
-typedef struct Term {
-int coeff, xExp, yExp, zExp;
-struct Term *next;
-} Term;
-
-// Function to create a new term
-Term* createTerm(int coeff, int xExp, int yExp, int zExp) {
-Term newTerm = (Term)malloc(sizeof(Term));
-newTerm->coeff = coeff;
-newTerm->xExp = xExp;
-newTerm->yExp = yExp;
-newTerm->zExp = zExp;
-newTerm->next = NULL;
-return newTerm;
-}
-
-// Function to insert a term in the polynomial
-void insertTerm(Term **head, int coeff, int xExp, int yExp, int zExp) {
-Term *newTerm = createTerm(coeff, xExp, yExp, zExp);
-if (*head == NULL) {
-*head = newTerm;
-newTerm->next = *head;
-} else {
-Term *temp = *head;
-while (temp->next != *head) {
-temp = temp->next;
-}
-temp->next = newTerm;
-newTerm->next = *head;
-}
-}
-
-// Function to evaluate a polynomial
-double evaluatePolynomial(Term *head, double x, double y, double z) {
-double result = 0.0;
-if (head == NULL) return result;
-Term *temp = head;
-do {
-result += temp->coeff * pow(x, temp->xExp) * pow(y, temp->yExp) * pow(z, temp->zExp);
-temp = temp->next;
-} while (temp != head);
-return result;
-}
-
-// Function to add two polynomials
-// Note: This is a simplified version and assumes terms are in the same order
-Term* addPolynomials(Term *head1, Term *head2) {
-Term *sumHead = NULL;
-Term *temp1 = head1, *temp2 = head2;
-if (head1 == NULL) return head2;
-if (head2 == NULL) return head1;
-do {
-insertTerm(&sumHead, temp1->coeff + temp2->coeff, temp1->xExp, temp1->yExp, temp1->zExp);
-temp1 = temp1->next;
-temp2 = temp2->next;
-} while (temp1 != head1 && temp2 != head2);
-return sumHead;
+return -1; // Key not found
 }
 
 int main() {
-Term *poly1 = NULL, *poly2 = NULL, *polySum = NULL;
-int coeff, xExp, yExp, zExp;
-int n, i;
-double x, y, z, result;
+initializeHashTable();
 
-// Input for POLY1
-printf("Enter the number of terms for POLY1: ");
-scanf("%d", &n);
-for (i = 0; i < n; i++) {
-printf("Enter coeff, x exponent, y exponent, z exponent for term %d: ", i + 1);
-scanf("%d %d %d %d", &coeff, &xExp, &yExp, &zExp);
-insertTerm(&poly1, coeff, xExp, yExp, zExp);
-}
+// Example usage
+insert(1024);
+insert(2028);
+insert(1024); // This will cause a collision and will be resolved by linear probing
 
-// Input for POLY2
-printf("Enter the number of terms for POLY2: ");
-scanf("%d", &n);
-for (i = 0; i < n; i++) {
-printf("Enter coeff, x exponent, y exponent, z exponent for term %d: ", i + 1);
-scanf("%d %d %d %d", &coeff, &xExp, &yExp, &zExp);
-insertTerm(&poly2, coeff, xExp, yExp, zExp);
-}
-
-// Add POLY1 and POLY2
-polySum = addPolynomials(poly1, poly2);
-
-// Evaluate POLY1
-printf("Enter values for x, y, and z to evaluate POLY1: ");
-scanf("%lf %lf %lf", &x, &y, &z);
-result = evaluatePolynomial(poly1, x, y, z);
-printf("POLY1(%lf, %lf, %lf) = %lf\n", x, y, z, result);
-
-// Display POLYSUM
-printf("POLYSUM(x, y, z) = ");
-Term *temp = polySum;
-if (temp != NULL) {
-do {
-printf("%+dx^%dy^%dz ", temp->coeff, temp->xExp, temp->yExp, temp->zExp);
-temp = temp->next;
-} while (temp != polySum);
-printf("\n");
+int key = 1024;
+int searchResult = search(key);
+if (searchResult != -1) {
+printf("Key %d found at index: %d\n", key, searchResult);
 } else {
-printf("0\n"); // POLYSUM is empty
+printf("Key %d not found\n", key);
 }
-
-// Free memory (not shown, but important in a complete program)
 
 return 0;
 }
                 </pre>
-                <button class="copy-btn" onclick="copyCode(2)">Copy Code</button>
+                <button class="copy-btn" onclick="copyCode(0)">Copy Code</button>
             </div>
         </div>
         <div class="program">
-            <h3 onclick="toggleContent(3)">Program 4:</h3>
+            <h3 onclick="toggleContent(1)">Program 11:</h3>
             <div class="program-content">
                 <pre>
-#include &lt;stdio.h&gt;
-#include &lt;stdlib.h&gt;
-#include &lt;string.h&gt;
-#include &lt;ctype.h&gt;
-
-#define MAX 100
-
-// Function to return precedence of operators
-int precedence(char ch) {
-switch (ch) {
-case '+':
-case '-':
-return 1;
-
-case '*':
-case '/':
-case '%':
-return 2;
-
-case '^':
-return 3;
-}
-return -1;
-}
-
-// Function to convert infix expression to postfix expression
-void infixToPostfix(char* infix, char* postfix) {
-int i, j;
-char stack[MAX];
-int top = -1;
-
-for (i = 0, j = 0; infix[i]; ++i) {
-// If the scanned character is an operand, add it to output.
-if (isalnum(infix[i]))
-postfix[j++] = infix[i];
-// If the scanned character is an '(', push it to the stack.
-else if (infix[i] == '(')
-stack[++top] = infix[i];
-// If the scanned character is an ')', pop and output from the stack
-// until an '(' is encountered.
-else if (infix[i] == ')') {
-while (top != -1 && stack[top] != '(')
-postfix[j++] = stack[top--];
-if (top != -1)
-top--; // pop '('
-} else { // operator encountered
-while (top != -1 && precedence(infix[i]) <= precedence(stack[top]))
-postfix[j++] = stack[top--];
-stack[++top] = infix[i];
-}
-}
-
-// Pop all the remaining elements from the stack
-while (top != -1) {
-postfix[j++] = stack[top--];
-}
-
-postfix[j] = '\0';
-}
-
-int main() {
-char infix[MAX];
-char postfix[MAX];
-
-printf("Enter infix expression: ");
-gets(infix);
-
-infixToPostfix(infix, postfix);
-printf("Postfix expression: %s\n", postfix);
-
-return 0;
-}
-                </pre>
-                <button class="copy-btn" onclick="copyCode(3)">Copy Code</button>
-            </div>
-        </div>
-        <div class="program">
-            <h3 onclick="toggleContent(4)">Program 5:</h3>
-            <div class="program-content">
-                <pre>
-#include stdio.h
-#include stdlib.h
-#include stdbool.h
-#include math.h
-#include string.h
-#include ctype.h
-
-#define MAX 100
-
-
-// Stack structure for postfix evaluation
-struct Stack {
-    int top;
-    unsigned capacity;
-    int* array;
-};
-
-// Function to create a stack of given capacity
-struct Stack* createStack(unsigned capacity) {
-    struct Stack* stack = (struct Stack*)malloc(sizeof(struct Stack));
-    stack->top = -1;
-    stack->capacity = capacity;
-    stack->array = (int*)malloc(stack->capacity * sizeof(int));
-    return stack;
-}
-
-// Stack is full when top is equal to the last index
-bool isFull(struct Stack* stack) {
-    return stack->top == stack->capacity - 1;
-}
-
-// Stack is empty when top is -1
-bool isEmpty(struct Stack* stack) {
-    return stack->top == -1;
-}
-
-// Function to add an item to the stack
-void push(struct Stack* stack, int item) {
-    if (isFull(stack))
-        return;
-    stack->array[++stack->top] = item;
-}
-
-// Function to remove an item from the stack
-int pop(struct Stack* stack) {
-    if (isEmpty(stack))
-        return -1;
-    return stack->array[stack->top--];
-}
-
-// Function to evaluate a postfix expression
-int evaluatePostfix(char* exp) {
-    struct Stack* stack = createStack(strlen(exp));
-    int i;
-
-    for (i = 0; exp[i]; ++i) {
-        // If the scanned character is an operand (number here), push it to the stack.
-        if (isdigit(exp[i]))
-            push(stack, exp[i] - '0');
-        else {
-            int val1 = pop(stack);
-            int val2 = pop(stack);
-            switch (exp[i]) {
-            case '+': push(stack, val2 + val1); break;
-            case '-': push(stack, val2 - val1); break;
-            case '*': push(stack, val2 * val1); break;
-            case '/': push(stack, val2 / val1); break;
-            case '%': push(stack, val2 % val1); break;
-            case '^': push(stack, (int)pow(val2, val1)); break;
-            }
-        }
-    }
-    return pop(stack);
-}
-
-// Recursive function to solve the Tower of Hanoi problem
-void towerOfHanoi(int n, char from_rod, char to_rod, char aux_rod) {
-    if (n == 1) {
-        printf("\n Move disk 1 from rod %c to rod %c", from_rod, to_rod);
-        return;
-    }
-    towerOfHanoi(n - 1, from_rod, aux_rod, to_rod);
-    printf("\n Move disk %d from rod %c to rod %c", n, from_rod, to_rod);
-    towerOfHanoi(n - 1, aux_rod, to_rod, from_rod);
-}
-
-
-int main() {
-    int choice;
-    char postfixExp[MAX];
-    int n;
-
-    while (1) {
-        printf("\n--- Menu ---\n");
-        printf("1. Evaluate Postfix Expression\n");
-        printf("2. Solve Tower of Hanoi\n");
-        printf("3. Exit\n");
-        printf("Enter your choice: ");
-        scanf("%d", &choice);
-
-        switch (choice) {
-            case 1:
-                printf("Enter postfix expression: ");
-                scanf("%s", postfixExp);
-                printf("Postfix Evaluation: %s = %d\n", postfixExp, evaluatePostfix(postfixExp));
-                break;
-            case 2:
-                printf("Enter the number of disks: ");
-                scanf("%d", &n);
-                printf("The sequence of moves involved in the Tower of Hanoi are:\n");
-                towerOfHanoi(n, 'A', 'C', 'B'); // A, B and C are names of rods
-                break;
-            case 3:
-                printf("Exiting the program.\n");
-                return 0;
-            default:
-                printf("Invalid choice. Please try again.\n");
-        }
-    }
-    return 0;
-}
-                </pre>
-                <button class="copy-btn" onclick="copyCode(4)">Copy Code</button>
-            </div>
-        </div>
-        <div class="program">
-            <h3 onclick="toggleContent(5)">Program 11:</h3>
-            <div class="program-content">
-                <pre>
-#include stdio.h
+                    #include stdio.h
 #include stdlib.h
 
 #define MAX 100 
@@ -684,6 +271,501 @@ printf("Invalid choice!\n");
 
 return 0;
 }
+                </pre>
+                <button class="copy-btn" onclick="copyCode(1)">Copy Code</button>
+            </div>
+        </div>
+        <div class="program">
+            <h3 onclick="toggleContent(2)">Program 9:</h3>
+            <div class="program-content">
+                <pre>
+                    #include stdio.h
+                    #include stdlib.h
+                    #include math.h
+                    typedef struct Term {
+                    int coeff, xExp, yExp, zExp;
+                    struct Term *next;
+                    } Term;
+                    
+                    // Function to create a new term
+                    Term* createTerm(int coeff, int xExp, int yExp, int zExp) {
+                    Term newTerm = (Term)malloc(sizeof(Term));
+                    newTerm->coeff = coeff;
+                    newTerm->xExp = xExp;
+                    newTerm->yExp = yExp;
+                    newTerm->zExp = zExp;
+                    newTerm->next = NULL;
+                    return newTerm;
+                    }
+                    
+                    // Function to insert a term in the polynomial
+                    void insertTerm(Term **head, int coeff, int xExp, int yExp, int zExp) {
+                    Term *newTerm = createTerm(coeff, xExp, yExp, zExp);
+                    if (*head == NULL) {
+                    *head = newTerm;
+                    newTerm->next = *head;
+                    } else {
+                    Term *temp = *head;
+                    while (temp->next != *head) {
+                    temp = temp->next;
+                    }
+                    temp->next = newTerm;
+                    newTerm->next = *head;
+                    }
+                    }
+                    
+                    // Function to evaluate a polynomial
+                    double evaluatePolynomial(Term *head, double x, double y, double z) {
+                    double result = 0.0;
+                    if (head == NULL) return result;
+                    Term *temp = head;
+                    do {
+                    result += temp->coeff * pow(x, temp->xExp) * pow(y, temp->yExp) * pow(z, temp->zExp);
+                    temp = temp->next;
+                    } while (temp != head);
+                    return result;
+                    }
+                    
+                    // Function to add two polynomials
+                    // Note: This is a simplified version and assumes terms are in the same order
+                    Term* addPolynomials(Term *head1, Term *head2) {
+                    Term *sumHead = NULL;
+                    Term *temp1 = head1, *temp2 = head2;
+                    if (head1 == NULL) return head2;
+                    if (head2 == NULL) return head1;
+                    do {
+                    insertTerm(&sumHead, temp1->coeff + temp2->coeff, temp1->xExp, temp1->yExp, temp1->zExp);
+                    temp1 = temp1->next;
+                    temp2 = temp2->next;
+                    } while (temp1 != head1 && temp2 != head2);
+                    return sumHead;
+                    }
+                    
+                    int main() {
+                    Term *poly1 = NULL, *poly2 = NULL, *polySum = NULL;
+                    int coeff, xExp, yExp, zExp;
+                    int n, i;
+                    double x, y, z, result;
+                    
+                    // Input for POLY1
+                    printf("Enter the number of terms for POLY1: ");
+                    scanf("%d", &n);
+                    for (i = 0; i < n; i++) {
+                    printf("Enter coeff, x exponent, y exponent, z exponent for term %d: ", i + 1);
+                    scanf("%d %d %d %d", &coeff, &xExp, &yExp, &zExp);
+                    insertTerm(&poly1, coeff, xExp, yExp, zExp);
+                    }
+                    
+                    // Input for POLY2
+                    printf("Enter the number of terms for POLY2: ");
+                    scanf("%d", &n);
+                    for (i = 0; i < n; i++) {
+                    printf("Enter coeff, x exponent, y exponent, z exponent for term %d: ", i + 1);
+                    scanf("%d %d %d %d", &coeff, &xExp, &yExp, &zExp);
+                    insertTerm(&poly2, coeff, xExp, yExp, zExp);
+                    }
+                    
+                    // Add POLY1 and POLY2
+                    polySum = addPolynomials(poly1, poly2);
+                    
+                    // Evaluate POLY1
+                    printf("Enter values for x, y, and z to evaluate POLY1: ");
+                    scanf("%lf %lf %lf", &x, &y, &z);
+                    result = evaluatePolynomial(poly1, x, y, z);
+                    printf("POLY1(%lf, %lf, %lf) = %lf\n", x, y, z, result);
+                    
+                    // Display POLYSUM
+                    printf("POLYSUM(x, y, z) = ");
+                    Term *temp = polySum;
+                    if (temp != NULL) {
+                    do {
+                    printf("%+dx^%dy^%dz ", temp->coeff, temp->xExp, temp->yExp, temp->zExp);
+                    temp = temp->next;
+                    } while (temp != polySum);
+                    printf("\n");
+                    } else {
+                    printf("0\n"); // POLYSUM is empty
+                    }
+                    
+                    // Free memory (not shown, but important in a complete program)
+                    
+                    return 0;
+                    }
+                </pre>
+                <button class="copy-btn" onclick="copyCode(2)">Copy Code</button>
+            </div>
+        </div>
+        <div class="program">
+            <h3 onclick="toggleContent(3)">Program 8:</h3>
+            <div class="program-content">
+                <pre>
+                    #include stdio.h
+                    #include stdlib.h
+                    #include string.h
+                    
+                    // Employee Structure
+                    typedef struct Employee {
+                    char ssn[20];
+                    char name[100];
+                    char dept[50];
+                    char designation[50];
+                    double sal;
+                    char phNo[15];
+                    struct Employee *prev, *next;
+                    } Employee;
+                    
+                    // Function Declarations
+                    Employee* createEmployee();
+                    Employee* insertAtEnd(Employee* head);
+                    void display(Employee* head);
+                    int countNodes(Employee* head);
+                    Employee* deleteAtEnd(Employee* head);
+                    Employee* insertAtFront(Employee* head);
+                    Employee* deleteAtFront(Employee* head);
+                    
+                    // Main Function
+                    int main() {
+                    Employee *head = NULL;
+                    int choice, count;
+                    
+                    while(1) {
+                    printf("\nMenu:\n");
+                    printf("1. Insert Employee at End\n");
+                    printf("2. Display Employees\n");
+                    printf("3. Count Employees\n");
+                    printf("4. Delete Employee at End\n");
+                    printf("5. Insert Employee at Front\n");
+                    printf("6. Delete Employee at Front\n");
+                    printf("7. Exit\n");
+                    printf("Enter your choice: ");
+                    scanf("%d", &choice);
+                    
+                    switch(choice) {
+                    case 1: head = insertAtEnd(head); break;
+                    case 2: display(head); break;
+                    case 3:
+                    count = countNodes(head);
+                    printf("Total number of employees: %d\n", count);
+                    break;
+                    case 4: head = deleteAtEnd(head); break;
+                    case 5: head = insertAtFront(head); break;
+                    case 6: head = deleteAtFront(head); break;
+                    case 7: exit(0);
+                    default: printf("Invalid choice!\n");
+                    }
+                    }
+                    return 0;
+                    }
+                    
+                    // Function Definitions
+                    Employee* createEmployee() {
+                    Employee newNode = (Employee)malloc(sizeof(Employee));
+                    printf("Enter SSN: ");
+                    scanf("%s", newNode->ssn);
+                    printf("Enter Name: ");
+                    scanf("%s", newNode->name); // Use fgets for multi-word names
+                    printf("Enter Department: ");
+                    scanf("%s", newNode->dept);
+                    printf("Enter Designation: ");
+                    scanf("%s", newNode->designation);
+                    printf("Enter Salary: ");
+                    scanf("%lf", &newNode->sal);
+                    printf("Enter Phone Number: ");
+                    scanf("%s", newNode->phNo);
+                    
+                    newNode->prev = NULL;
+                    newNode->next = NULL;
+                    return newNode;
+                    }
+                    
+                    Employee* insertAtEnd(Employee* head) {
+                    Employee *newNode = createEmployee();
+                    if (head == NULL) {
+                    return newNode;
+                    } else {
+                    Employee *temp = head;
+                    while (temp->next != NULL) {
+                    temp = temp->next;
+                    }
+                    temp->next = newNode;
+                    newNode->prev = temp;
+                    return head;
+                    }
+                    }
+                    
+                    void display(Employee* head) {
+                    Employee *temp = head;
+                    if (head == NULL) {
+                    printf("List is empty!\n");
+                    return;
+                    }
+                    while (temp != NULL) {
+                    printf("SSN: %s, Name: %s, Dept: %s, Designation: %s, Salary: %.2f, Phone No: %s\n",
+                    temp->ssn, temp->name, temp->dept, temp->designation, temp->sal, temp->phNo);
+                    temp = temp->next;
+                    }
+                    }
+                    
+                    int countNodes(Employee* head) {
+                    int count = 0;
+                    Employee *temp = head;
+                    while (temp != NULL) {
+                    count++;
+                    temp = temp->next;
+                    }
+                    return count;
+                    }
+                    
+                    Employee* deleteAtEnd(Employee* head) {
+                    if (head == NULL) {
+                    printf("List is already empty!\n");
+                    return NULL;
+                    } else if (head->next == NULL) {
+                    free(head);
+                    return NULL;
+                    } else {
+                    Employee *temp = head;
+                    while (temp->next != NULL) {
+                    temp = temp->next;
+                    }
+                    temp->prev->next = NULL;
+                    free(temp);
+                    return head;
+                    }
+                    }
+                    
+                    Employee* insertAtFront(Employee* head) {
+                    Employee *newNode = createEmployee();
+                    if (head == NULL) {
+                    return newNode;
+                    } else {
+                    newNode->next = head;
+                    head->prev = newNode;
+                    return newNode;
+                    }
+                    }
+                    
+                    Employee* deleteAtFront(Employee* head) {
+                    if (head == NULL) {
+                    printf("List is already empty!\n");
+                    return NULL;
+                    } else {
+                    Employee *temp = head;
+                    head = head->next;
+                    if (head != NULL) head->prev = NULL;
+                    free(temp);
+                    return head;
+                    }
+                    }
+                </pre>
+                <button class="copy-btn" onclick="copyCode(3)">Copy Code</button>
+            </div>
+        </div>
+        <div class="program">
+            <h3 onclick="toggleContent(4)">Program 5:</h3>
+            <div class="program-content">
+                <pre>
+                    #include stdio.h
+                        #include stdlib.h
+                        #include stdbool.h
+                        #include math.h
+                        #include string.h
+                        #include ctype.h
+                        
+                        #define MAX 100
+                        
+                        
+                        // Stack structure for postfix evaluation
+                        struct Stack {
+                            int top;
+                            unsigned capacity;
+                            int* array;
+                        };
+                        
+                        // Function to create a stack of given capacity
+                        struct Stack* createStack(unsigned capacity) {
+                            struct Stack* stack = (struct Stack*)malloc(sizeof(struct Stack));
+                            stack->top = -1;
+                            stack->capacity = capacity;
+                            stack->array = (int*)malloc(stack->capacity * sizeof(int));
+                            return stack;
+                        }
+                        
+                        // Stack is full when top is equal to the last index
+                        bool isFull(struct Stack* stack) {
+                            return stack->top == stack->capacity - 1;
+                        }
+                        
+                        // Stack is empty when top is -1
+                        bool isEmpty(struct Stack* stack) {
+                            return stack->top == -1;
+                        }
+                        
+                        // Function to add an item to the stack
+                        void push(struct Stack* stack, int item) {
+                            if (isFull(stack))
+                                return;
+                            stack->array[++stack->top] = item;
+                        }
+                        
+                        // Function to remove an item from the stack
+                        int pop(struct Stack* stack) {
+                            if (isEmpty(stack))
+                                return -1;
+                            return stack->array[stack->top--];
+                        }
+                        
+                        // Function to evaluate a postfix expression
+                        int evaluatePostfix(char* exp) {
+                            struct Stack* stack = createStack(strlen(exp));
+                            int i;
+                        
+                            for (i = 0; exp[i]; ++i) {
+                                // If the scanned character is an operand (number here), push it to the stack.
+                                if (isdigit(exp[i]))
+                                    push(stack, exp[i] - '0');
+                                else {
+                                    int val1 = pop(stack);
+                                    int val2 = pop(stack);
+                                    switch (exp[i]) {
+                                    case '+': push(stack, val2 + val1); break;
+                                    case '-': push(stack, val2 - val1); break;
+                                    case '*': push(stack, val2 * val1); break;
+                                    case '/': push(stack, val2 / val1); break;
+                                    case '%': push(stack, val2 % val1); break;
+                                    case '^': push(stack, (int)pow(val2, val1)); break;
+                                    }
+                                }
+                            }
+                            return pop(stack);
+                        }
+                        
+                        // Recursive function to solve the Tower of Hanoi problem
+                        void towerOfHanoi(int n, char from_rod, char to_rod, char aux_rod) {
+                            if (n == 1) {
+                                printf("\n Move disk 1 from rod %c to rod %c", from_rod, to_rod);
+                                return;
+                            }
+                            towerOfHanoi(n - 1, from_rod, aux_rod, to_rod);
+                            printf("\n Move disk %d from rod %c to rod %c", n, from_rod, to_rod);
+                            towerOfHanoi(n - 1, aux_rod, to_rod, from_rod);
+                        }
+                        
+                        
+                        int main() {
+                            int choice;
+                            char postfixExp[MAX];
+                            int n;
+                        
+                            while (1) {
+                                printf("\n--- Menu ---\n");
+                                printf("1. Evaluate Postfix Expression\n");
+                                printf("2. Solve Tower of Hanoi\n");
+                                printf("3. Exit\n");
+                                printf("Enter your choice: ");
+                                scanf("%d", &choice);
+                        
+                                switch (choice) {
+                                    case 1:
+                                        printf("Enter postfix expression: ");
+                                        scanf("%s", postfixExp);
+                                        printf("Postfix Evaluation: %s = %d\n", postfixExp, evaluatePostfix(postfixExp));
+                                        break;
+                                    case 2:
+                                        printf("Enter the number of disks: ");
+                                        scanf("%d", &n);
+                                        printf("The sequence of moves involved in the Tower of Hanoi are:\n");
+                                        towerOfHanoi(n, 'A', 'C', 'B'); // A, B and C are names of rods
+                                        break;
+                                    case 3:
+                                        printf("Exiting the program.\n");
+                                        return 0;
+                                    default:
+                                        printf("Invalid choice. Please try again.\n");
+                                }
+                            }
+                            return 0;
+                        }
+                </pre>
+                <button class="copy-btn" onclick="copyCode(4)">Copy Code</button>
+            </div>
+        </div>
+        <div class="program">
+            <h3 onclick="toggleContent(5)">Program 4:</h3>
+            <div class="program-content">
+                <pre>
+                    #include stdio.h
+                        #include stdlib.h
+                        #include string.h
+                        #include ctype.h
+                        
+                        #define MAX 100
+                        
+                        // Function to return precedence of operators
+                        int precedence(char ch) {
+                        switch (ch) {
+                        case '+':
+                        case '-':
+                        return 1;
+                        
+                        case '*':
+                        case '/':
+                        case '%':
+                        return 2;
+                        
+                        case '^':
+                        return 3;
+                        }
+                        return -1;
+                        }
+                        
+                        // Function to convert infix expression to postfix expression
+                        void infixToPostfix(char* infix, char* postfix) {
+                        int i, j;
+                        char stack[MAX];
+                        int top = -1;
+                        
+                        for (i = 0, j = 0; infix[i]; ++i) {
+                        // If the scanned character is an operand, add it to output.
+                        if (isalnum(infix[i]))
+                        postfix[j++] = infix[i];
+                        // If the scanned character is an '(', push it to the stack.
+                        else if (infix[i] == '(')
+                        stack[++top] = infix[i];
+                        // If the scanned character is an ')', pop and output from the stack
+                        // until an '(' is encountered.
+                        else if (infix[i] == ')') {
+                        while (top != -1 && stack[top] != '(')
+                        postfix[j++] = stack[top--];
+                        if (top != -1)
+                        top--; // pop '('
+                        } else { // operator encountered
+                        while (top != -1 && precedence(infix[i]) <= precedence(stack[top]))
+                        postfix[j++] = stack[top--];
+                        stack[++top] = infix[i];
+                        }
+                        }
+                        
+                        // Pop all the remaining elements from the stack
+                        while (top != -1) {
+                        postfix[j++] = stack[top--];
+                        }
+                        
+                        postfix[j] = '\0';
+                        }
+                        
+                        int main() {
+                        char infix[MAX];
+                        char postfix[MAX];
+                        
+                        printf("Enter infix expression: ");
+                        gets(infix);
+                        
+                        infixToPostfix(infix, postfix);
+                        printf("Postfix expression: %s\n", postfix);
+                        
+                        return 0;
+                        }
                 </pre>
                 <button class="copy-btn" onclick="copyCode(5)">Copy Code</button>
             </div>
